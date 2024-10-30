@@ -1,0 +1,16 @@
+[build-system]
+requires = ["briefcase>=0.4"]
+build-backend = "briefcase.build"
+
+[tool.briefcase]
+project_name = "SceneConverter"
+bundle = "com.example.SceneConverter"
+version = "0.1.0"
+description = "A simple Android app built with Python."
+author = "CY"
+author_email = "will.cy_chen@htc.com"
+license = "MIT"
+
+[tool.briefcase.app.SceneConverter]
+formal_name = "Scene Converter"
+sources = ["SceneConverter"]
