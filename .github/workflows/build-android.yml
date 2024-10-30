@@ -1,0 +1,57 @@
+name: Build Android APK for aarch64
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      JAVA_HOME: /opt/hostedtoolcache/java/openjdk-11.0.19+7/x64
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'  # 根據您的需求選擇 Python 版本
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install briefcase
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Set up Android SDK and NDK
+        uses: android-actions/setup-android@v2
+        with:
+          sdk-version: '33.0.0'  # 您可以根據需求調整 SDK 版本
+          ndk-version: '23.1.7779620'  # 指定支援 aarch64 的 NDK 版本
+
+      - name: Configure Android NDK for aarch64
+        run: |
+          export ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/$NDK_VERSION
+          export PATH=$PATH:$ANDROID_NDK_HOME
+
+      - name: Build APK with Briefcase
+        run: |
+          briefcase create android
+          briefcase build android
+          briefcase package android
+
+      - name: Upload APK as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: android-apk
+          path: dist/android/*.apk
